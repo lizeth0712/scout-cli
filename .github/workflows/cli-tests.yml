@@ -19,13 +19,21 @@ jobs:
           curl -L https://github.com/docker/scout-cli/releases/latest/download/install.sh -o install.sh
           chmod +x install.sh
           ./install.sh
+        shell: bash
 
       - name: Show Docker and Scout versions
         run: |
           docker version
           docker scout version
+        shell: bash
+
+      # Paso opcional para verificar que pwsh existe (útil para debug)
+      - name: Check PowerShell availability
+        run: |
+          which pwsh || echo "pwsh not found"
+        shell: bash
 
       - name: Run Docker Scout CLI tests (run_all.ps1)
-        shell: pwsh
         run: |
-          ./tests/run_all.ps1
+          pwsh ./tests/run_all.ps1
+        shell: bash

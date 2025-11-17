@@ -23,7 +23,7 @@ Write-Host "Código de salida: $status"
 # 1. Verificar código de salida
 if ($status -ne 0) {
     if ($output -match "Log in with your Docker ID" -or $output -match "docker login") {
-        Write-Host "⚠ PASS (entorno limitado): docker scout <comando> requiere autenticación en Docker Hub en este runner de CI." -ForegroundColor Yellow
+        Write-Host "✅  ¿PASS (entorno limitado): docker scout <comando> requiere autenticación en Docker Hub en este runner de CI." -ForegroundColor Yellow
         Write-Host "Salida:"
         Write-Host $output
         exit 0

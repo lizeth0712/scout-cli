@@ -1,0 +1,16 @@
+.git
+.gitignore
+.vscode
+.vs
+bin
+obj
+node_modules
+dist
+build
+**/*.log
+**/*.tmp
+**/__pycache__/
+**/*.zip
+**/*.7z
+**/*.rar
+**/*.iso

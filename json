@@ -1,0 +1,32 @@
+
+
+## Overview
+
+                    │       Analyzed Image         
+────────────────────┼──────────────────────────────
+  Target            │  arlethl/scout-cli:latest    
+    digest          │  0b44ac118d79                
+    platform        │ linux/amd64                  
+    vulnerabilities │    0C     0H     1M     0L   
+    size            │ 3.4 MB                       
+    packages        │ 19                           
+
+
+## Packages and Vulnerabilities
+
+   0C     0H     1M     0L  zlib 1.2.13-r1
+pkg:apk/alpine/zlib@1.2.13-r1?os_name=alpine&os_version=3.18
+
+    x MEDIUM CVE-2023-6992
+      https://scout.docker.com/v/CVE-2023-6992?s=alpine&n=zlib&ns=alpine&t=apk&osn=alpine&osv=3.18&vr=%3C%3D1.2.13-r1
+      Affected range : <=1.2.13-r1  
+      Fixed version  : not fixed    
+    
+
+
+1 vulnerability found in 1 package
+  CRITICAL  0  
+  HIGH      0  
+  MEDIUM    1  
+  LOW       0  
+

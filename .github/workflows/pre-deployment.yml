@@ -1,0 +1,73 @@
+name: Pre-Deployment Workflow (Docker Scout)
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  pre-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout del código
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Configurar Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 3. Construir la imagen Docker
+      - name: Build Docker image
+        run: docker build -t arlethl/scout-cli:latest .
+
+      # 4. Ejecutar Docker Scout CVE Analysis
+      - name: Run Docker Scout CVE Analysis
+        uses: docker/scout-action@v1
+        with:
+          image: arlethl/checklistctpat:latest  # Usar el repositorio de Docker Hub
+          command: cves
+          only-severities: critical,high   # Filtro por vulnerabilidades críticas y altas
+          exit-code: true  # Hace que falle si se detectan vulnerabilidades
+
+      # 5. Ejecutar Docker Scout Recommendations
+      - name: Run Docker Scout Recommendations
+        uses: docker/scout-action@v1
+        with:
+          image: arlethl/scout-cli:latest
+          command: recommendations
+          only-severities: critical,high   # Filtro por vulnerabilidades críticas y altas
+          exit-code: true
+
+      # 6. Evaluar políticas de seguridad con Docker Scout
+      - name: Evaluate Security Policies with Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          image: arlethl/scout-cli:latest
+          command: policy
+          exit-code: true  # Hace que falle si no se cumplen las políticas
+
+      # 7. Autenticación para Docker Hub
+      - name: Log into Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}  # Usando el secreto de Docker Hub
+          password: ${{ secrets.DOCKER_TOKEN }}  # Usando el token de Docker Hub
+
+      # 8. Subir la imagen Docker al Hub
+      - name: Push Docker image to Docker Hub
+        run: docker push arlethl/scout-cli:latest
+
+      # 9. Exportar los CVEs a un archivo JSON y subirlo como artefacto
+      - name: Export CVEs to JSON and upload as artifact
+        run: docker scout cves arlethl/scout-cli:latest --output json > cves.json
+
+      # 10. Subir el reporte de CVEs como artefacto
+      - name: Upload CVEs report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cves-report
+          path: cves.json

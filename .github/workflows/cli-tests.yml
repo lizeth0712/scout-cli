@@ -14,25 +14,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Docker Scout CLI
+      # 1) Instalar PowerShell (pwsh) en el runner de Ubuntu
+      - name: Install PowerShell
         run: |
-          curl -L https://github.com/docker/scout-cli/releases/latest/download/install.sh -o install.sh
-          chmod +x install.sh
-          ./install.sh
+          sudo apt-get update
+          sudo apt-get install -y powershell
         shell: bash
 
+      # 2) Instalar Docker Scout CLI con el script oficial
+      - name: Install Docker Scout CLI
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
+        shell: bash
+
+      # 3) Mostrar versiones de Docker y Scout (para el log)
       - name: Show Docker and Scout versions
         run: |
           docker version
           docker scout version
         shell: bash
 
-      # Paso opcional para verificar que pwsh existe (útil para debug)
-      - name: Check PowerShell availability
-        run: |
-          which pwsh || echo "pwsh not found"
-        shell: bash
-
+      # 4) Ejecutar tus pruebas en PowerShell
       - name: Run Docker Scout CLI tests (run_all.ps1)
         run: |
           pwsh ./tests/run_all.ps1

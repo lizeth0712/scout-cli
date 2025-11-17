@@ -1,5 +1,5 @@
 # tests/run_all.ps1
-# Ejecuta todas las pruebas de comandos docker scout
+# Ejecuta todas las pruebas de comandos docker scout (multi-plataforma)
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
@@ -16,14 +16,26 @@ $tests = @(
     "test_policy.ps1"
 )
 
+# Detectar qué ejecutable de PowerShell usar (Windows: powershell, Linux: pwsh)
+$psExe = $null
+if (Get-Command powershell -ErrorAction SilentlyContinue) {
+    $psExe = "powershell"
+}
+elseif (Get-Command pwsh -ErrorAction SilentlyContinue) {
+    $psExe = "pwsh"
+}
+else {
+    Write-Host "❌ No se encontró ningún ejecutable de PowerShell (powershell / pwsh)." -ForegroundColor Red
+    exit 1
+}
+
 foreach ($t in $tests) {
     $scriptPath = Join-Path $basePath $t
     Write-Host "`n--- Ejecutando $t ---`n" -ForegroundColor Cyan
 
-    # Ejecutar cada prueba como script de PowerShell
-    powershell -ExecutionPolicy Bypass -File $scriptPath
+    & $psExe -ExecutionPolicy Bypass -File $scriptPath
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "`n❌ Alguna prueba fallo. Deteniendo ejecución." -ForegroundColor Red
+        Write-Host "`n❌ Alguna prueba falló. Deteniendo ejecución." -ForegroundColor Red
         exit 1
     }
 }

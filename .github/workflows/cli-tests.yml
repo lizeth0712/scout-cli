@@ -36,7 +36,7 @@ jobs:
           pwsh ./tests/run_all.ps1
         shell: bash
 
-      # 👇 NUEVO: preparar Go para las pruebas de integración
+      #  NUEVO: preparar Go para las pruebas de integración
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
